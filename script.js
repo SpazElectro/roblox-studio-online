@@ -139,7 +139,23 @@ function parseContent(content) {
 	let writtenContent = []
 
 	content.forEach(item => {
-		writtenContent[item["Properties"]["string"]["#text"]] = {
+		let itemName = item["Properties"]["string"]["#text"]
+
+		if(itemName == undefined) {
+			// find the name
+			let finished = false
+
+			item["Properties"]["string"].forEach(property => {
+				if(finished) return
+
+				if(property["@_name"] == "Name") {
+					itemName = property["#text"]
+					finished = true
+				}
+			})
+		}
+
+		writtenContent[itemName] = {
 			"Class": item["@_class"],
 			"Properties": parseProperties(item["Properties"]),
 			"Content": parseContent(item["Item"]),
